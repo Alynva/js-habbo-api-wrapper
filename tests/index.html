@@ -1,0 +1,13 @@
+<html>
+    <head>
+        <title>Test of JS HabboAPI</title>
+        <script src="../src/HabboAPI.js"></script>
+    </head>
+    <body>
+        <script>
+            new HabboAPI("com.br")
+                .getHabbo("alynva")
+                    .then(user => document.body.innerText = user.getMotto());
+        </script>
+    </body>
+</html>
