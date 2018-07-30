@@ -4,10 +4,65 @@
         <script src="../src/HabboAPI.js"></script>
     </head>
     <body>
+        <form>
+            <label>
+                <span>Select the hotel: </span>
+                <select>
+                    <option selected hidden>Choose</option>
+                    <option value="com">com</option>
+                    <option value="com.br">com.br</option>
+                    <option value="es">es</option>
+                </select>
+            </label>
+            <label>
+                <span>Type the nickname: </span>
+                <input type="text" placeholder="alynva">
+            </label>
+        </form>
+        <h5>get Habbo</h5>
+        <p></p>
+        <h5>get Profile</h5>
+        <p></p>
+        <h5>get Photos</h5>
+        <p></p>
+        <h5>get Group</h5>
+        <p></p>
+        <h5>get Achievements</h5>
+        <p></p>
         <script>
-            new HabboAPI("com.br")
-                .getHabbo("alynva")
-                    .then(user => document.body.innerText = user.getMotto());
+            let values = {};
+            document.querySelector("form").addEventListener("change", event => {
+                values[event.target.nodeName] = event.target.value;
+
+                updateInfo()
+            });
+
+            function updateInfo() {
+                let api = new HabboAPI(values.SELECT)
+                api.getHabbo(values.INPUT)
+                    .then(user => {
+                        document.querySelector("p:nth-of-type(1)").innerText = JSON.stringify(user);
+                        
+                        api.getProfile(user.id)
+                            .then(profile => {
+                                document.querySelector("p:nth-of-type(2)").innerText = JSON.stringify(profile);
+                                
+                                api.getGroup(profile.groups[0].id)
+                                    .then(group => {
+                                        document.querySelector("p:nth-of-type(4)").innerText = JSON.stringify(group);
+                                    });
+                            });
+                        api.getPhotos(user.id)
+                            .then(photos => {
+                                document.querySelector("p:nth-of-type(3)").innerText = JSON.stringify(photos);
+                            });
+                        api.getAchievements(user.id)
+                            .then(achievements => {
+                                document.querySelector("p:nth-of-type(5)").innerText = JSON.stringify(achievements);
+                            });
+                    });
+
+            }
         </script>
     </body>
 </html>
