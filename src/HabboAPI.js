@@ -19,7 +19,7 @@ class Habbo extends Entity {
         this._figureString = data.figureString || data.habboFigure;
         this._memberSince = data.memberSince;
         this._profileVisible = data.profileVisible;
-        this._selectedBadges = data.selectedBadges;
+        this._selectedBadges = data.selectedBadges ? data.selectedBadges.map(b => new Badge(b)) : data.selectedBadges;
     }
     
     
@@ -50,10 +50,10 @@ class Profile extends Entity {
     parse(data) {
         this._data = data;
         this._habbo = new Habbo(data.user);
-        this._friends = data.friends.map(f => new Habbo(f));
-        this._groups = data.groups.map(g => new Group(g));
-        this._rooms = data.rooms.map(r => new Room(r));
-        this._badges = data.badges.map(b => new Badge(b));
+        this._friends = data.friends ? data.friends.map(f => new Habbo(f)) : data.friends;
+        this._groups = data.groups ? data.groups.map(g => new Group(g)) : data.groups;
+        this._rooms = data.rooms ? data.rooms.map(r => new Room(r)) : data.rooms;
+        this._badges = data.badges ? data.badges.map(b => new Badge(b)) : data.badges;
     }
 
     get habbo() {
