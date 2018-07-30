@@ -349,7 +349,7 @@ class HabboAPI {
 
     async getGroup(id) {
         let url_group = '/api/public/groups/'+id,
-            url_members = '/api/public/groups/'+id+'/members';
+            url_members = url_group+'/members';
 
         let group = new Group();
 
@@ -403,7 +403,7 @@ class HabboAPI {
             req.onload = e => {
                 if(req.readyState != 4 && e.type !== 'load') return;
                 if(req.status && req.status != 200) {
-                    reject();
+                    reject(req.status);
                 } else {
                     resolve(asJson ? JSON.parse(req.responseText) : req.responseText);
                 }
