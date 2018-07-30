@@ -310,6 +310,8 @@ class HabboAPI {
         await this._urlRquest(this.api_base + url)
             .then((r) => {
                 habbo.parse(r);
+            }).catch((err) => {
+                throw new Error("Error getting habbo's info: ", +err);
             });
 
         return habbo;
@@ -323,7 +325,9 @@ class HabboAPI {
         await this._urlRquest(this.api_base + url)
             .then((r) => {
                 profile.parse(r);
-            })
+            }).catch((err) => {
+                throw new Error("Error getting profile: ", +err);
+            });
 
         return profile;
     }
@@ -336,7 +340,9 @@ class HabboAPI {
         await this._urlRquest(this.api_base + url)
             .then((r) => {
                 r.map(p => photos.push(new Photo(p)));
-            })
+            }).catch((err) => {
+                throw new Error("Error getting photos: ", +err);
+            });
 
         return photos;
     }
@@ -350,12 +356,16 @@ class HabboAPI {
         await this._urlRquest(this.api_base + url_group)
             .then((r) => {
                 group.parse(r);
-            })
+            }).catch((err) => {
+                throw new Error("Error getting group's info: " + err)
+            });
 
         await this._urlRquest(this.api_base + url_members)
             .then((r) => {
                 r.map(m => group.addMember(new Habbo(m)));
-            })
+            }).catch((err) => {
+                throw new Error("Error getting group's members: " + err)
+            });
 
         return group;
     }
@@ -368,7 +378,9 @@ class HabboAPI {
         await this._urlRquest(this.api_base + url)
             .then((r) => {
                 r.map(a => achs.push(new Achievement(a)))
-            })
+            }).catch((err) => {
+                throw new Error("Error getting achievements: ", +err);
+            });
 
         return achs;
     }
