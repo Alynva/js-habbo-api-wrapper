@@ -12,7 +12,7 @@ class Entity {
 
 class Habbo extends Entity {
     parse(data) {
-        this._data = data
+        // this._data = data
         this._id = data.uniqueId;
         this._name = data.name;
         this._motto = data.motto;
@@ -75,7 +75,7 @@ class Profile extends Entity {
 
 class Photo extends Entity {
     parse(data) {
-        this._data = data;
+        // this._data = data;
         this._id = data.id;
         this._preview_url = data.previewUrl;
         this._tags = data.tags;
@@ -126,7 +126,7 @@ class Photo extends Entity {
 
 class Group extends Entity {
     parse(data) {
-        this._data = data;
+        // this._data = data;
         this._id = data.id;
         this._name = data.name;
         this._description = data.description;
@@ -177,7 +177,7 @@ class Group extends Entity {
 
 class Achievement extends Entity {
     parse(data) {
-        this._data = data;
+        // this._data = data;
         this._id = data.achievement.id;
         this._name = data.achievement.name;
         this._category = data.achievement.category;
@@ -208,7 +208,7 @@ class Achievement extends Entity {
 
 class Room extends Entity {
     parse(data) {
-        this._data = data;
+        // this._data = data;
         this._id = data.id;
         this._uniqueId = data.uniqueId;
         this._name = data.name;
@@ -275,7 +275,7 @@ class Room extends Entity {
 
 class Badge extends Entity {
     parse(data) {
-        this._data = data;
+        // this._data = data;
         this._badgeIndex = data.badgeIndex;
         this._code = data.code;
         this._name = data.name;
