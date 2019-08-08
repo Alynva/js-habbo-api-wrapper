@@ -31,8 +31,13 @@
         <p></p>
         <script>
             let values = {};
-            document.querySelector("form").addEventListener("change", event => {
-                values[event.target.nodeName] = event.target.value;
+            document.querySelector("form").addEventListener("submit", e => {
+                e.preventDefault()
+                
+                updateInfo()
+            })
+            document.querySelector("form").addEventListener("change", e => {
+                values[e.target.nodeName] = e.target.value;
 
                 updateInfo()
             });
