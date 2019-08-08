@@ -6,7 +6,8 @@ class Entity {
     }
 
     parse(data) {
-        this._data = data;
+        this._data = data
+        throw new Error('The method "parse" was not implemented. The data is accessible from "this._data".')
     }
 }
 
@@ -112,122 +113,120 @@ class Badge extends Entity {
 
 class HabboAPI {
     constructor(hotel = 'com') {
-        this.hotel = hotel;
-        this.api_base = 'https://www.habbo.'+this.hotel;
+        this.hotel = hotel
+        this.api_base = 'https://www.habbo.'+this.hotel
     }
 
     async getHabbo(id, useUniqueId = false) {
-        let url = useUniqueId ? '/api/public/users/'+id : '/api/public/users?name='+id;
+        const url = useUniqueId ? '/api/public/users/'+id : '/api/public/users?name='+id
 
-        let habbo = new Habbo();
+        const habbo = new Habbo()
 
-        await this._urlRquest(this.api_base + url)
-            .then((r) => {
-                habbo.parse(r);
-            }).catch((err) => {
-                throw new Error("Error getting habbo's info: ", +err);
-            });
+        await this.fetchAPI(this.api_base + url)
+            .then(r => habbo.parse(r))
+            .catch((err) => {
+                throw new Error(`Error getting habbo's info: ${err}`)
+            })
 
-        return habbo;
+        return habbo
     }
 
     async getProfile(id) {
-        let url = '/api/public/users/'+id+'/profile';
+        const url = '/api/public/users/'+id+'/profile'
 
-        let profile = new Profile();
+        const profile = new Profile()
 
-        await this._urlRquest(this.api_base + url)
-            .then((r) => {
-                profile.parse(r);
-            }).catch((err) => {
-                throw new Error("Error getting profile: ", +err);
-            });
+        await this.fetchAPI(this.api_base + url)
+            .then(r => profile.parse(r))
+            .catch((err) => {
+                throw new Error(`Error getting profile: ${err}`)
+            })
 
-        return profile;
+        return profile
     }
 
     async getPhotos(id) {
-        let url = id ? '/extradata/public/users/'+id+'/photos' : '/extradata/public/photos';
+        const url = id ? '/extradata/public/users/'+id+'/photos' : '/extradata/public/photos'
 
-        let photos = [];
+        const photos = []
 
-        await this._urlRquest(this.api_base + url)
-            .then((r) => {
-                r.map(p => photos.push(new Photo(p)));
-            }).catch((err) => {
-                throw new Error("Error getting photos: ", +err);
-            });
+        await this.fetchAPI(this.api_base + url)
+            .then(r => r.forEach(p => photos.push(new Photo(p))))
+            .catch((err) => {
+                throw new Error(`Error getting photos: ${err}`)
+            })
 
-        return photos;
+        return photos
     }
 
     async getGroup(id) {
-        let url_group = '/api/public/groups/'+id,
-            url_members = url_group+'/members';
+        const url_group = '/api/public/groups/'+id,
+            url_members = url_group+'/members'
 
-        let group = new Group();
+        const group = new Group()
 
-        await this._urlRquest(this.api_base + url_group)
-            .then((r) => {
-                group.parse(r);
-            }).catch((err) => {
-                throw new Error("Error getting group's info: " + err)
-            });
+        await this.fetchAPI(this.api_base + url_group)
+            .then(r => group.parse(r))
+            .catch((err) => {
+                throw new Error(`Error getting group's info: ${err}`)
+            })
 
-        await this._urlRquest(this.api_base + url_members)
-            .then((r) => {
-                r.map(m => group.addMember(new Habbo(m)));
-            }).catch((err) => {
-                throw new Error("Error getting group's members: " + err)
-            });
+        await this.fetchAPI(this.api_base + url_members)
+            .then(r => r.forEach(m => group.addMember(new Habbo(m))))
+            .catch((err) => {
+                throw new Error(`Error getting group's members: ${err}`)
+            })
 
-        return group;
+        return group
     }
 
     async getAchievements(id) {
-        let url = '/api/public/achievements/'+id;
+        const url = '/api/public/achievements/'+id
 
-        let achs = [];
+        const achievements = []
 
-        await this._urlRquest(this.api_base + url)
-            .then((r) => {
-                r.map(a => achs.push(new Achievement(a)))
-            }).catch((err) => {
-                throw new Error("Error getting achievements: ", +err);
-            });
+        await this.fetchAPI(this.api_base + url)
+            .then(r => r.forEach(a => achievements.push(new Achievement(a))))
+            .catch((err) => {
+                throw new Error(`Error getting achievements: ${err}`)
+            })
 
-        return achs;
+        return achievements
     }
 
-    _urlRquest(url, asJson = true) {
-        return new Promise((resolve, reject) => {
-            let req;
-            if (window.XDomainRequest) {
-                req = new XDomainRequest();
-                req.open('get', url);
-    
-                // Update the timeout to 30 seconds for XDomainRequests. 
-                req.timeout = 30000;
-            } else {
-                req = new XMLHttpRequest();
-                req.open('get', url);
-                // req.setRequestHeader('User-Agent', 'swapi-javascript');
-                // req.setRequestHeader('Accept', 'application/json');
-            }
-            req.onload = e => {
-                if(req.readyState != 4 && e.type !== 'load') return;
-                if(req.status && req.status != 200) {
-                    reject(req.status);
+    fetchAPI(url) {
+        return fetch(url)
+            .then(async r => {
+                if (!r.ok) throw (await r.json())
+                return r
+            })
+            .then(r => r.json())
+            .catch(err => {
+                let message
+                if (err.errors) {
+                    switch (err.errors[0].msg) {
+                        case "user.invalid_name":
+                            message = `${err.errors[0].value} is an invalid Habbo name.`
+                            break
+                    
+                        default:
+                            message = `Unknown error from Habbo API: ${JSON.stringify(err.errors)}`
+                            break
+                    }
+                } else if (err.error) {
+                    switch (err.error) {
+                        case "not-found":
+                            message = `The user was not found.`
+                            break
+                    
+                        default:
+                            message = `Unknown error from Habbo API: ${JSON.stringify(err.error)}`
+                            break
+                    }
                 } else {
-                    resolve(asJson ? JSON.parse(req.responseText) : req.responseText);
+                    message = `Unknown error from Habbo API: ${JSON.stringify(err)}`
                 }
-            };
-    
-            // Wrap in a 0 millisecond timeout.
-            // XDomainRequests appear to randomly fail unless kicked into a new scope.
-            setTimeout(function(){
-                req.send();
-            }, 0);
-        })
+                throw new Error(message)
+            })
     }
 }
