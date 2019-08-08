@@ -47,20 +47,24 @@
                             .then(profile => {
                                 document.querySelector("p:nth-of-type(2)").innerText = JSON.stringify(profile);
                                 
-                                api.getGroup(profile.groups[0].id)
-                                    .then(group => {
-                                        document.querySelector("p:nth-of-type(4)").innerText = JSON.stringify(group);
-                                    });
-                            });
+                                return api.getGroup(profile.groups[0].id)
+                            })
+                            .then(group => {
+                                document.querySelector("p:nth-of-type(4)").innerText = JSON.stringify(group);
+                            })
+                            .catch(err => alert(err))
                         api.getPhotos(user.id)
                             .then(photos => {
                                 document.querySelector("p:nth-of-type(3)").innerText = JSON.stringify(photos);
-                            });
+                            })
+                            .catch(err => alert(err))
                         api.getAchievements(user.id)
                             .then(achievements => {
                                 document.querySelector("p:nth-of-type(5)").innerText = JSON.stringify(achievements);
-                            });
-                    });
+                            })
+                            .catch(err => alert(err))
+                    })
+                    .catch(err => alert(err))
 
             }
         </script>
