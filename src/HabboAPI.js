@@ -114,7 +114,7 @@ class Badge extends Entity {
 class HabboAPI {
     constructor(hotel = 'com') {
         this.hotel = hotel
-        this.api_base = 'https://www.habbo.'+this.hotel
+        this.api_base = 'https://www.habbo'+(hotel==='game'?'x':'')+'.'+this.hotel
     }
 
     async getHabbo(id, useUniqueId = false) {
